@@ -184,7 +184,7 @@ const addExpense = async () => {
 }
 
 const totalPeriod = computed(() => expenses.value.reduce((acc, exp) => acc + exp.total_amount, 0))
-const formatCurrency = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(val)
+const formatCurrency = (val) => new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT', maximumFractionDigits: 0 }).format(val)
 const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('ru-RU')
 
 onMounted(async () => {

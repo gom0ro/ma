@@ -85,7 +85,7 @@ const chartOptions = computed(() => ({
   tooltip: { theme: 'light' }
 }))
 
-const formatCurrency = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val)
+const formatCurrency = (val) => new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT', maximumFractionDigits: 0 }).format(val)
 
 onMounted(async () => {
     try {

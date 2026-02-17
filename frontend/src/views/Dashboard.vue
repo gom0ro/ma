@@ -134,7 +134,7 @@ const stats = ref({
 })
 
 const formatCurrency = (val) => {
-  return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val)
+  return new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT', maximumFractionDigits: 0 }).format(val)
 }
 
 const pieColors = ['#007AFF', '#34C759', '#FFCC00', '#FF3B30', '#5856D6']

@@ -85,7 +85,7 @@
             </div>
             
             <div class="form-group">
-              <label class="t-small">Сумма (₽)</label>
+              <label class="t-small">Сумма (₸)</label>
               <input 
                 v-model.number="newOp.amount" 
                 type="number" 
@@ -150,7 +150,7 @@ const submitOp = async () => {
   }
 }
 
-const formatCurrency = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val)
+const formatCurrency = (val) => new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT', maximumFractionDigits: 0 }).format(val)
 const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('ru-RU')
 const formatTime = (dateStr) => new Date(dateStr).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 

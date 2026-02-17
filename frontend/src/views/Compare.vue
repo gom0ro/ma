@@ -135,7 +135,7 @@ const compare = async () => {
     }
 }
 
-const formatCurrency = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val)
+const formatCurrency = (val) => new Intl.NumberFormat('ru-KZ', { style: 'currency', currency: 'KZT', maximumFractionDigits: 0 }).format(val)
 const formatDateShort = (d) => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
 
 const chartSeries = computed(() => [
