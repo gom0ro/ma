@@ -5,6 +5,8 @@ from passlib.context import CryptContext
 from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Явно указываем библиотеке passlib использовать bcrypt
+import passlib.handlers.bcrypt
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
