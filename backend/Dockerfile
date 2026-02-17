@@ -1,7 +1,7 @@
-# Используем официальный образ Python
+# Используем официальный легкий образ Python
 FROM python:3.11-slim
 
-# Устанавливаем системные зависимости
+# Системные зависимости
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Сначала копируем только зависимости для кэширования слоев Docker
+# Копируем и устанавливаем зависимости
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Копируем остальной код
+# Копируем проект
 COPY . .
 
-# Команда для запуска через gunicorn (рекомендуется для Railway)
-CMD gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000}
+# Запуск через uvicorn с поддержкой прокси (важно для Railway)
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers
