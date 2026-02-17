@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, extract
 from app.models.models import Sale, Expense, CashOperation, Product, Supplier
 from datetime import datetime, date, timedelta
-import pandas as pd
 
 class FinanceService:
     @staticmethod
