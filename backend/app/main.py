@@ -1,43 +1,61 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, data, analytics
-from app.db.session import engine, Base
+from app.db.session import engine, Base, SessionLocal
+from app.models.models import User
+from app.core.security import get_password_hash
+import logging
 
-# Create tables (for production, use Alembic)
-Base.metadata.create_all(bind=engine)
+# Настройка логов для отладки в Render
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Создаем таблицы
+try:
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+except Exception as e:
+    logger.error(f"Error creating database tables: {e}")
 
 app = FastAPI(title="Canteen Finance Management")
 
+# Максимально разрешительный CORS для GitHub Pages
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "https://gom0ro.github.io",
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "*"
+    ],
+    allow_credentials=False, # Ставим False, чтобы разрешить "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Подключаем роутеры
 app.include_router(auth.router)
 app.include_router(data.router)
 app.include_router(analytics.router)
 
-from app.db.session import SessionLocal
-from app.models.models import User
-from app.core.security import get_password_hash
-
 @app.on_event("startup")
 def startup_event():
-    db = SessionLocal()
-    admin = db.query(User).filter(User.username == "admin").first()
-    if not admin:
-        admin = User(
-            username="admin", 
-            hashed_password=get_password_hash("admin123"), 
-            full_name="System Admin"
-        )
-        db.add(admin)
-        db.commit()
-    db.close()
+    try:
+        db = SessionLocal()
+        admin = db.query(User).filter(User.username == "admin").first()
+        if not admin:
+            admin = User(
+                username="admin", 
+                hashed_password=get_password_hash("admin123"), 
+                full_name="System Admin"
+            )
+            db.add(admin)
+            db.commit()
+            logger.info("Default admin user created")
+        db.close()
+    except Exception as e:
+        logger.error(f"Startup error: {e}")
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Canteen Finance API"}
+    return {"status": "online", "message": "Canteen Finance API is running"}
