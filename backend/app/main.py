@@ -42,24 +42,18 @@ app.include_router(analytics.router)
 def startup_event():
     try:
         db = SessionLocal()
-        admin = db.query(User).filter(User.username == "admin").first()
-        hashed_pw = get_password_hash("admin123")
+        # Удаляем старого админа, если он есть, чтобы создать "чистого"
+        db.query(User).filter(User.username == "admin").delete()
         
-        if not admin:
-            admin = User(
-                username="admin", 
-                hashed_password=hashed_pw, 
-                full_name="System Admin"
-            )
-            db.add(admin)
-            db.commit()
-            logger.info("Default admin user created with password 'admin123'")
-        else:
-            # Принудительно обновляем пароль, если он вдруг не совпадает (напр. после смены хеширования)
-            admin.hashed_password = hashed_pw
-            db.commit()
-            logger.info("Admin password reset to 'admin123'")
-            
+        hashed_pw = get_password_hash("admin123")
+        admin = User(
+            username="admin", 
+            hashed_password=hashed_pw, 
+            full_name="System Admin"
+        )
+        db.add(admin)
+        db.commit()
+        logger.info("ADMIN RESET COMPLETE: username='admin', password='admin123'")
         db.close()
     except Exception as e:
         logger.error(f"Startup error: {e}")
