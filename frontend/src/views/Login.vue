@@ -1,36 +1,35 @@
 <template>
   <div class="login-page">
-    <!-- Background Decor -->
     <div class="decor blob-1"></div>
     <div class="decor blob-2"></div>
 
-    <div class="login-container animate-fade">
-      <div class="login-card">
+    <div class="login-container animate-view">
+      <div class="card p-card login-card">
         <div class="login-header">
           <div class="logo-circle">
             <span>C</span>
           </div>
           <h1 class="logo-title">CanteenPay</h1>
-          <p class="logo-subtitle">Система управления финансами</p>
+          <p class="t-small">Система управления финансами</p>
         </div>
 
         <form @submit.prevent="handleLogin" class="login-form">
           <div class="form-group">
-            <label class="form-label">Логин</label>
+            <label class="t-small">Логин</label>
             <input 
               v-model="username"
               type="text" 
-              class="input"
+              class="p-input"
               placeholder="admin"
               required
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Пароль</label>
+            <label class="t-small">Пароль</label>
             <input 
               v-model="password"
               type="password" 
-              class="input"
+              class="p-input"
               placeholder="••••••••"
               required
             />
@@ -38,14 +37,19 @@
 
           <button 
             :disabled="loading"
-            class="btn btn-primary btn-full"
+            class="p-btn p-btn-primary full-width mt-4"
           >
             {{ loading ? 'Авторизация...' : 'Войти в систему' }}
           </button>
         </form>
         
-        <div v-if="error" class="error-box">
-          {{ error }}
+        <div v-if="error" class="error-box mt-4">
+          <AlertCircle size="18" />
+          <span>{{ error }}</span>
+        </div>
+
+        <div class="login-footer mt-4">
+          <p class="t-tiny opacity-50">Если вы забыли пароль, свяжитесь с системным администратором</p>
         </div>
       </div>
     </div>
@@ -56,6 +60,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import { AlertCircle } from 'lucide-vue-next'
 
 const username = ref('admin')
 const password = ref('admin123')
@@ -71,7 +76,11 @@ const handleLogin = async () => {
     await authStore.login(username.value, password.value)
     router.push('/')
   } catch (e) {
-    error.value = 'Неверный логин или пароль'
+    if (e.response?.status === 401) {
+      error.value = 'Неверный логин или пароль. Попробуйте admin / admin123'
+    } else {
+      error.value = 'Ошибка сервера. Проверьте соединение.'
+    }
   } finally {
     loading.value = false
   }
@@ -84,34 +93,34 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg);
+  background-color: var(--p-bg);
   position: relative;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: 20px;
 }
 
 .decor {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.15;
+  opacity: 0.1;
   z-index: 0;
 }
 
 .blob-1 {
   top: -100px;
-  left: -100px;
-  width: 500px;
-  height: 500px;
-  background: var(--primary);
+  left: -200px;
+  width: 600px;
+  height: 600px;
+  background: var(--p-primary);
 }
 
 .blob-2 {
   bottom: -100px;
-  right: -100px;
-  width: 500px;
-  height: 500px;
-  background: var(--accent);
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  background: var(--p-accent);
 }
 
 .login-container {
@@ -122,88 +131,74 @@ const handleLogin = async () => {
 }
 
 .login-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(20px);
-  padding: 3rem;
-  border-radius: 40px;
-  border: 1px solid var(--surface);
-  box-shadow: var(--shadow-lg);
+  padding: 48px;
+  text-align: center;
 }
 
 .login-header {
-  text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 40px;
 }
 
 .logo-circle {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  background: var(--p-text);
+  color: white;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   font-weight: 800;
-  font-size: 1.8rem;
-  margin: 0 auto 1.5rem;
-  box-shadow: 0 10px 20px rgba(0, 102, 255, 0.2);
+  font-size: 24px;
+  margin: 0 auto 16px;
 }
 
 .logo-title {
-  font-size: 2rem;
-  color: var(--text);
-  margin-bottom: 0.25rem;
-}
-
-.logo-subtitle {
-  color: var(--text-soft);
-  font-weight: 500;
+  font-size: 28px;
+  margin-bottom: 4px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 20px;
+  text-align: left;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
-.form-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  padding-left: 0.5rem;
-}
-
-.btn-full {
+.full-width {
   width: 100%;
-  padding: 1.1rem;
-  margin-top: 1rem;
-  font-size: 1rem;
-  background: var(--text);
-}
-
-.btn-full:hover {
-  background: #000;
-  transform: translateY(-2px);
+  padding: 16px;
 }
 
 .error-box {
-  margin-top: 1.5rem;
-  background: #fff1f2;
-  color: #e11d48;
-  padding: 1rem;
-  border-radius: var(--radius);
-  text-align: center;
-  font-size: 0.9rem;
+  background: #FFF1F0;
+  color: #FF3B30;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
   font-weight: 600;
-  border: 1px solid #ffe4e6;
 }
+
+.login-footer {
+  text-align: center;
+}
+
+.t-tiny {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.opacity-50 { opacity: 0.5; }
 </style>
