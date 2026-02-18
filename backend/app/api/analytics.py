@@ -26,3 +26,7 @@ def compare_dates(date1: date, date2: date, db: Session = Depends(get_db)):
 @router.get("/cash-summary")
 def get_cash_summary(db: Session = Depends(get_db)):
     return FinanceService.get_cash_summary(db)
+
+@router.get("/calendar-summary")
+def get_calendar_summary(year: int, month: int, db: Session = Depends(get_db)):
+    return FinanceService.get_calendar_stats(db, year, month)

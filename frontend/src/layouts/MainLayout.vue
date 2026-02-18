@@ -67,6 +67,7 @@ import {
   BarChart3, 
   Wallet, 
   Replace, 
+  Calendar as CalendarIcon,
   LogOut,
   Menu,
   X
@@ -88,6 +89,7 @@ const navItems = [
   { name: 'Финансы', path: '/finances', icon: BarChart3 },
   { name: 'Касса', path: '/cashier', icon: Wallet },
   { name: 'Сравнение', path: '/compare', icon: Replace },
+  { name: 'Календарь', path: '/calendar', icon: CalendarIcon },
 ]
 
 const currentRouteName = computed(() => {

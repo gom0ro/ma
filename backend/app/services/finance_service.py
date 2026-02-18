@@ -141,6 +141,60 @@ class FinanceService:
                 "expenses": exp_data
             }
         }
+    @staticmethod
+    def get_calendar_stats(db: Session, year: int, month: int):
+        import calendar
+        from sqlalchemy import case
+        _, last_day = calendar.monthrange(year, month)
+        start_date = date(year, month, 1)
+        end_date = date(year, month, last_day)
+        
+        # Revenue from sales
+        sales = db.query(
+            func.date(Sale.date).label('day'),
+            func.sum(Sale.total_amount).label('amount')
+        ).filter(
+            and_(func.date(Sale.date) >= start_date, func.date(Sale.date) <= end_date)
+        ).group_by(func.date(Sale.date)).all()
+        
+        # Expenses
+        expenses = db.query(
+            func.date(Expense.date).label('day'),
+            func.sum(Expense.total_amount).label('amount')
+        ).filter(
+            and_(func.date(Expense.date) >= start_date, func.date(Expense.date) <= end_date)
+        ).group_by(func.date(Expense.date)).all()
+        
+        # Cash operations
+        cash_ops = db.query(
+            func.date(CashOperation.date).label('day'),
+            func.sum(case([(CashOperation.type == 'INCOME', CashOperation.amount)], else_=0)).label('income'),
+            func.sum(case([(CashOperation.type == 'OUTCOME', CashOperation.amount)], else_=0)).label('outcome')
+        ).filter(
+            and_(func.date(CashOperation.date) >= start_date, func.date(CashOperation.date) <= end_date)
+        ).group_by(func.date(CashOperation.date)).all()
+        
+        results = {}
+        for s in sales:
+            d = str(s.day)
+            if d not in results: results[d] = {"sales": 0, "expenses": 0, "cash_income": 0, "cash_outcome": 0}
+            results[d]["sales"] = float(s.amount)
+            
+        for e in expenses:
+            d = str(e.day)
+            if d not in results: results[d] = {"sales": 0, "expenses": 0, "cash_income": 0, "cash_outcome": 0}
+            results[d]["expenses"] = float(e.amount)
+            
+        for c in cash_ops:
+            d = str(c.day)
+            if d not in results: results[d] = {"sales": 0, "expenses": 0, "cash_income": 0, "cash_outcome": 0}
+            results[d]["cash_income"] = float(c.income)
+            results[d]["cash_outcome"] = float(c.outcome)
+            
+        return results
+
+    @staticmethod
+    def get_cash_summary(db: Session):
         total_income = db.query(func.sum(CashOperation.amount)).filter(CashOperation.type == 'INCOME').scalar() or 0.0
         total_outcome = db.query(func.sum(CashOperation.amount)).filter(CashOperation.type == 'OUTCOME').scalar() or 0.0
         

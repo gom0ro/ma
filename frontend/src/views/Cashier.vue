@@ -89,10 +89,21 @@
               <input 
                 v-model.number="newOp.amount" 
                 type="number" 
+                step="any"
                 class="p-input amount-input" 
                 placeholder="0.00" 
                 required
                 min="0.01"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="t-small">Дата операции</label>
+              <input 
+                v-model="newOp.date" 
+                type="date" 
+                class="p-input" 
+                required
               />
             </div>
             
@@ -107,8 +118,8 @@
               ></textarea>
             </div>
             
-            <button class="p-btn p-btn-primary full-width mt-2 py-4">
-              Сохранить операцию
+            <button type="submit" class="p-btn p-btn-primary full-width mt-2 py-4" :disabled="loadingOp">
+              {{ loadingOp ? 'Сохранение...' : 'Сохранить операцию' }}
             </button>
           </form>
         </div>
@@ -124,7 +135,13 @@ import api from '../api'
 
 const balanceRes = ref({ balance: 0, total_purchases: 0, total_sales: 0 })
 const history = ref([])
-const newOp = ref({ type: 'INCOME', amount: 0, description: '' })
+const loadingOp = ref(false)
+const newOp = ref({ 
+    type: 'INCOME', 
+    amount: null, 
+    description: '',
+    date: new Date().toISOString().split('T')[0]
+})
 
 const fetchAll = async () => {
     try {
@@ -140,13 +157,36 @@ const fetchAll = async () => {
 }
 
 const submitOp = async () => {
-  if (newOp.value.amount <= 0) return
+  if (!newOp.value.amount || newOp.value.amount <= 0) {
+      alert('Пожалуйста, укажите корректную сумму')
+      return
+  }
+  
+  loadingOp.value = true
   try {
-    await api.post('/data/cash', newOp.value)
-    newOp.value = { type: 'INCOME', amount: 0, description: '' }
-    fetchAll()
+    // Конвертируем дату в ISO с временем
+    const opDate = new Date(newOp.value.date)
+    const now = new Date()
+    opDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds())
+    
+    await api.post('/data/cash', {
+        ...newOp.value,
+        date: opDate.toISOString()
+    })
+    
+    newOp.value = { 
+        type: 'INCOME', 
+        amount: null, 
+        description: '',
+        date: new Date().toISOString().split('T')[0]
+    }
+    await fetchAll()
+    alert('Операция успешно сохранена')
   } catch (e) {
     console.error(e)
+    alert('Ошибка при сохранении: ' + (e.response?.data?.detail || e.message))
+  } finally {
+    loadingOp.value = false
   }
 }
 

@@ -129,6 +129,10 @@
             <label class="t-small">Категория</label>
             <input v-model="newExpense.category" placeholder="Еда, бытовая химия..." class="p-input" required />
           </div>
+          <div class="form-item">
+            <label class="t-small">Дата</label>
+            <input v-model="newExpense.date" type="datetime-local" class="p-input" required />
+          </div>
           <div class="modal-btns mt-4">
             <button type="button" @click="showAddModal = false" class="p-btn p-btn-ghost">Отмена</button>
             <button class="p-btn p-btn-primary">Сохранить</button>
@@ -148,7 +152,14 @@ const expenses = ref([])
 const suppliers = ref([])
 const showAddModal = ref(false)
 const filters = ref({ start: '', end: '', supplier: '' })
-const newExpense = ref({ name: '', quantity: 0, price: 0, supplier_id: '', category: '' })
+const newExpense = ref({ 
+    name: '', 
+    quantity: 0, 
+    price: 0, 
+    supplier_id: '', 
+    category: '',
+    date: new Date().toISOString().slice(0, 16)
+})
 const newSupplier = ref({ name: '' })
 
 const fetchSuppliers = async () => {
@@ -179,7 +190,14 @@ const fetchExpenses = async () => {
 const addExpense = async () => {
   await api.post('/data/expenses', newExpense.value)
   showAddModal.value = false
-  newExpense.value = { name: '', quantity: 0, price: 0, supplier_id: '', category: '' }
+  newExpense.value = { 
+    name: '', 
+    quantity: 0, 
+    price: 0, 
+    supplier_id: '', 
+    category: '',
+    date: new Date().toISOString().slice(0, 16)
+  }
   fetchExpenses()
 }
 

@@ -5,6 +5,7 @@ import Expenses from '../views/Expenses.vue'
 import Finances from '../views/Finances.vue'
 import Cashier from '../views/Cashier.vue'
 import Compare from '../views/Compare.vue'
+import Calendar from '../views/Calendar.vue'
 import Login from '../views/Login.vue'
 
 const routes = [
@@ -22,6 +23,7 @@ const routes = [
             { path: 'finances', name: 'Finances', component: Finances },
             { path: 'cashier', name: 'Cashier', component: Cashier },
             { path: 'compare', name: 'Compare', component: Compare },
+            { path: 'calendar', name: 'Calendar', component: Calendar },
         ]
     }
 ]
