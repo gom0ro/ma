@@ -19,16 +19,11 @@ except Exception as e:
 
 app = FastAPI(title="Canteen Finance Management")
 
-# Максимально разрешительный CORS для GitHub Pages
+# Максимально разрешительный CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://gom0ro.github.io",
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "*"
-    ],
-    allow_credentials=False, # Ставим False, чтобы разрешить "*"
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -40,23 +35,9 @@ app.include_router(analytics.router)
 
 @app.on_event("startup")
 def startup_event():
-    try:
-        db = SessionLocal()
-        # Удаляем старого админа, если он есть, чтобы создать "чистого"
-        db.query(User).filter(User.username == "admin").delete()
-        
-        hashed_pw = get_password_hash("admin123")
-        admin = User(
-            username="admin", 
-            hashed_password=hashed_pw, 
-            full_name="System Admin"
-        )
-        db.add(admin)
-        db.commit()
-        logger.info("ADMIN RESET COMPLETE: username='admin', password='admin123'")
-        db.close()
-    except Exception as e:
-        logger.error(f"Startup error: {e}")
+    # Мы теперь создаем админа лениво в auth.py во время логина
+    # Это предотвращает ошибки при запуске на некоторых платформах
+    logger.info("Application starting up... Admin will be verified during login.")
 
 @app.get("/")
 def read_root():
