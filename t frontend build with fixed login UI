@@ -1,0 +1,36 @@
+[33mcommit 301f5b4b6d9a2606a5b4b9667d298ad767c7ebe6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: gom0ro <gom0ro>
+Date:   Wed Feb 18 20:23:29 2026 +0500
+
+    Fix login and backend auth
+
+ frontend/src/views/Login.vue | 143 [32m+++++++++++++++++++++[m[31m----------------------[m
+ 1 file changed, 69 insertions(+), 74 deletions(-)
+
+[33mcommit 3133ec8eeae827bf17a82921e24b1d3043152b0e[m
+Author: gom0ro <gom0ro>
+Date:   Wed Feb 18 20:14:26 2026 +0500
+
+    Force admin password update on startup to fix 401 issues
+
+ backend/app/main.py | 12 [32m++++++++++[m[31m--[m
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+[33mcommit a9269b00b1466d37d65ecc47aff570abf1b5f903[m
+Author: gom0ro <gom0ro>
+Date:   Wed Feb 18 20:11:27 2026 +0500
+
+    Final build: Fix Cashier numbers and Calendar integration
+
+ 404.html                       |   4 [32m+[m[31m-[m
+ assets/index-BNp7b13C.js       | 841 [31m-----------------------------------------[m
+ assets/index-DTewy0nj.js       | 841 [32m+++++++++++++++++++++++++++++++++++++++++[m
+ assets/index-DsXmw6Oe.css      |   1 [32m+[m
+ assets/index-EJAwrNFp.css      |   1 [31m-[m
+ docs/assets/index-BNp7b13C.js  | 841 [31m-----------------------------------------[m
+ docs/assets/index-DTewy0nj.js  | 841 [32m+++++++++++++++++++++++++++++++++++++++++[m
+ docs/assets/index-DsXmw6Oe.css |   1 [32m+[m
+ docs/assets/index-EJAwrNFp.css |   1 [31m-[m
+ docs/index.html                |   4 [32m+[m[31m-[m
+ index.html                     |   4 [32m+[m[31m-[m
+ 11 files changed, 1690 insertions(+), 1690 deletions(-)
