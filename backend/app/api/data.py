@@ -25,6 +25,13 @@ def get_suppliers(db: Session = Depends(get_db)):
 def create_supplier(supplier: SupplierCreate, db: Session = Depends(get_db)):
     return CRUDService.create_supplier(db, supplier)
 
+@router.delete("/suppliers/{supplier_id}")
+def delete_supplier(supplier_id: int, db: Session = Depends(get_db)):
+    success = CRUDService.delete_supplier(db, supplier_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Supplier not found")
+    return {"message": "Supplier deleted"}
+
 # Products
 @router.get("/products", response_model=List[ProductSchema])
 def get_products(db: Session = Depends(get_db)):

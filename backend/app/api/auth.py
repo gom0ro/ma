@@ -21,15 +21,22 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        print(f"DEBUG: Decoding token: {token[:10]}...")
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username: str = payload.get("sub")
+        print(f"DEBUG: Token sub: {username}")
         if username is None:
+            print("DEBUG: Username is None in token")
             raise credentials_exception
-    except JWTError:
+    except JWTError as e:
+        print(f"DEBUG: JWT Decode error: {e}")
         raise credentials_exception
+    
     user = db.query(User).filter(User.username == username).first()
     if user is None:
+        print(f"DEBUG: User {username} not found in DB")
         raise credentials_exception
+    print(f"DEBUG: User {username} authenticated successfully")
     return user
 
 @router.post("/register", response_model=UserSchema)

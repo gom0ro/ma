@@ -29,7 +29,10 @@
       </div>
       <div class="suppliers-cloud mt-3">
         <div v-for="s in suppliers" :key="s.id" class="supplier-pill">
-          {{ s.name }}
+          <span>{{ s.name }}</span>
+          <button @click="confirmDeleteSupplier(s)" class="delete-pill-btn" title="Удалить">
+            <X size="14" />
+          </button>
         </div>
         <div v-if="suppliers.length === 0" class="empty-msg">Список пуст</div>
       </div>
@@ -145,7 +148,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { Plus, Search, Receipt } from 'lucide-vue-next'
+import { Plus, Search, Receipt, X } from 'lucide-vue-next'
 import api from '../api'
 
 const expenses = ref([])
@@ -175,6 +178,18 @@ const addSupplier = async () => {
     fetchSuppliers()
   } catch (e) {
     console.error(e)
+  }
+}
+
+const confirmDeleteSupplier = async (supplier) => {
+  if (confirm(`Вы уверены, что хотите удалить поставщика "${supplier.name}"? Это может привести к ошибкам, если с ним связаны расходы.`)) {
+    try {
+      await api.delete(`/data/suppliers/${supplier.id}`)
+      fetchSuppliers()
+    } catch (e) {
+      alert('Не удалось удалить поставщика. Возможно, с ним связаны существующие расходы.')
+      console.error(e)
+    }
   }
 }
 
@@ -240,12 +255,40 @@ onMounted(async () => {
 }
 
 .supplier-pill {
-  padding: 8px 16px;
+  padding: 8px 12px 8px 16px;
   background: #F2F2F7;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   color: var(--p-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.supplier-pill:hover {
+  background: #E5E5EA;
+}
+
+.delete-pill-btn {
+  border: none;
+  background: transparent;
+  color: var(--p-text-sec);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.delete-pill-btn:hover {
+  opacity: 1;
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
 }
 
 .supplier-add-form {

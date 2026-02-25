@@ -9,6 +9,9 @@ api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token')
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
+        console.log('API Request:', config.method.toUpperCase(), config.url, 'Token:', token.substring(0, 10) + '...')
+    } else {
+        console.log('API Request:', config.method.toUpperCase(), config.url, 'No token found')
     }
     return config
 })

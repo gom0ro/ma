@@ -25,6 +25,17 @@ class CRUDService:
         return db_obj
 
     @staticmethod
+    def delete_supplier(db: Session, supplier_id: int):
+        db_obj = db.query(Supplier).filter(Supplier.id == supplier_id).first()
+        if db_obj:
+            # Note: Depending on your needs, you might want to handle related expenses
+            # Currently this will fail if there are dependent expenses due to FK constraints
+            db.delete(db_obj)
+            db.commit()
+            return True
+        return False
+
+    @staticmethod
     def get_products(db: Session):
         return db.query(Product).all()
 
