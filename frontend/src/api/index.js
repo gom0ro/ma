@@ -16,4 +16,18 @@ api.interceptors.request.use((config) => {
     return config
 })
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            console.error('Session expired or unauthorized. Clearing token.');
+            localStorage.removeItem('token');
+            if (!window.location.hash.includes('/login') && !window.location.pathname.includes('/login')) {
+                window.location.href = '#/login'; // Redirect to login page
+            }
+        }
+        return Promise.reject(error);
+    }
+)
+
 export default api
