@@ -144,7 +144,7 @@ const lineChartSeries = computed(() => [{
   data: stats.value.line_chart.data
 }])
 
-const lineChartOptions = {
+const lineChartOptions = computed(() => ({
   chart: { 
     toolbar: { show: false }, 
     fontFamily: 'Inter',
@@ -175,7 +175,7 @@ const lineChartOptions = {
     padding: { left: 0, right: 0 }
   },
   tooltip: { theme: 'light', x: { show: false } }
-}
+}))
 
 const pieChartSeries = computed(() => stats.value.pie_chart.data)
 const pieChartOptions = computed(() => ({

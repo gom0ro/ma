@@ -71,7 +71,7 @@ class FinanceService:
         def get_totals(d):
             rev = db.query(func.sum(Sale.total_amount)).filter(func.date(Sale.date) == d).scalar() or 0.0
             exp = db.query(func.sum(Expense.total_amount)).filter(func.date(Expense.date) == d).scalar() or 0.0
-            return rev, exp
+            return float(rev), float(exp)
 
         rev1, exp1 = get_totals(date1)
         rev2, exp2 = get_totals(date2)
@@ -80,17 +80,17 @@ class FinanceService:
         prof2 = rev2 - exp2
         
         def calc_diff(v1, v2):
-            if v1 == 0: return 100 if v2 > 0 else 0
-            return round(((v2 - v1) / v1) * 100, 2)
+            if v1 == 0: 
+                return 100.0 if v2 > 0 else 0.0
+            diff = ((v2 - v1) / v1) * 100
+            return round(diff, 1)
 
         return {
             "date1": date1.isoformat(),
             "date2": date2.isoformat(),
             "revenue": {"val1": rev1, "val2": rev2, "diff": calc_diff(rev1, rev2)},
             "expenses": {"val1": exp1, "val2": exp2, "diff": calc_diff(exp1, exp2)},
-            "profit": {"val1": prof1, "val2": prof2, "diff": calc_diff(prof1, prof2)},
-            "suppliers1": db.query(Supplier.name, func.sum(Expense.total_amount)).join(Expense).filter(func.date(Expense.date) == date1).group_by(Supplier.id).all(),
-            "suppliers2": db.query(Supplier.name, func.sum(Expense.total_amount)).join(Expense).filter(func.date(Expense.date) == date2).group_by(Supplier.id).all()
+            "profit": {"val1": prof1, "val2": prof2, "diff": calc_diff(prof1, prof2)}
         }
         
     @staticmethod
