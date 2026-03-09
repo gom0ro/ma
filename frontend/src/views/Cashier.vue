@@ -39,6 +39,7 @@
                   <th>Дата / Время</th>
                   <th>Описание</th>
                   <th class="text-right">Сумма</th>
+                  <th class="text-right">Действие</th>
                 </tr>
               </thead>
               <tbody>
@@ -52,6 +53,11 @@
                   </td>
                   <td :class="['text-right font-black', op.type === 'INCOME' ? 'text-success' : 'text-error']">
                     {{ op.type === 'INCOME' ? '+' : '-' }} {{ formatCurrency(op.amount) }}
+                  </td>
+                  <td class="text-right">
+                    <button @click="confirmDelete(op)" class="delete-btn" title="Удалить">
+                      <Trash2 size="18" />
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -130,7 +136,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Wallet } from 'lucide-vue-next'
+import { Wallet, Trash2 } from 'lucide-vue-next'
 import api from '../api'
 
 const balanceRes = ref({ balance: 0, total_purchases: 0, total_sales: 0 })
@@ -187,6 +193,18 @@ const submitOp = async () => {
     alert('Ошибка при сохранении: ' + (e.response?.data?.detail || e.message))
   } finally {
     loadingOp.value = false
+  }
+}
+
+const confirmDelete = async (op) => {
+  if (confirm(`Удалить запись "${op.description}" на сумму ${formatCurrency(op.amount)}?`)) {
+    try {
+      await api.delete(`/data/cash/${op.id}`)
+      await fetchAll()
+    } catch (e) {
+      console.error(e)
+      alert('Ошибка при удалении')
+    }
   }
 }
 
@@ -252,6 +270,23 @@ onMounted(fetchAll)
 .op-desc { color: var(--p-text-sec); font-size: 14px; font-weight: 500; }
 .text-success { color: var(--p-success); }
 .text-error { color: var(--p-error); }
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--p-text-sec);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  opacity: 0.5;
+}
+
+.delete-btn:hover {
+  background: #FFF1F0;
+  color: #FF3B30;
+  opacity: 1;
+}
 
 /* Form Sidebar */
 .form-sticky {

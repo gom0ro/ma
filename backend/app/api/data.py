@@ -71,3 +71,10 @@ def get_cash_history(db: Session = Depends(get_db)):
 @router.post("/cash", response_model=CashOperationSchema)
 def create_cash_op(op: CashOperationCreate, db: Session = Depends(get_db)):
     return CRUDService.create_cash_operation(db, op)
+
+@router.delete("/cash/{op_id}")
+def delete_cash_op(op_id: int, db: Session = Depends(get_db)):
+    success = CRUDService.delete_cash_operation(db, op_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Operation not found")
+    return {"message": "Operation deleted"}

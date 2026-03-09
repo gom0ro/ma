@@ -90,3 +90,12 @@ class CRUDService:
         db.commit()
         db.refresh(db_obj)
         return db_obj
+
+    @staticmethod
+    def delete_cash_operation(db: Session, op_id: int):
+        db_obj = db.query(CashOperation).filter(CashOperation.id == op_id).first()
+        if db_obj:
+            db.delete(db_obj)
+            db.commit()
+            return True
+        return False
